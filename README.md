@@ -8,10 +8,16 @@ A version of Firefox that's tailored for web developers.
 Building package
 ----------------
 
-```shell
+```sh
 apt-get -y install devscripts dpkg-dev debhelper
 git clone https://github.com/VitexSoftware/FirefoxDevelEditionDeb.git
 cd FirefoxDevelEditionDeb
+
+VERSION=$(
+  curl https://download-installer.cdn.mozilla.net/pub/devedition/releases/ | 
+  grep -o '[0-9]*[0-9][0-9]\.[0-9][a-z][0-9]*[0-9]' | tail -1
+) envsubst '${VERSION}' < debian/changelog.tmpl > debian/changelog
+
 debuild -i -us -uc -b
 ```
 

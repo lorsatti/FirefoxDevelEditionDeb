@@ -127,14 +127,16 @@ def buildPackage() {
         returnStdout: true
     ).trim()
 
-
     def SOURCE = sh (
 	script: 'dpkg-parsechangelog --show-field Source',
         returnStdout: true
     ).trim()
 
+    String url = 'https://download-installer.cdn.mozilla.net/pub/devedition/releases/'
+    sh "VERSION=\$(curl ${url} | grep -o '[0-9]*[0-9][0-9]\\.[0-9][a-z][0-9]*[0-9]' | tail -1) envsubst '\${VERSION}' < debian/changelog.tmpl > debian/changelog"
+
     def VERSION = sh (
-	script: 'dpkg-parsechangelog --show-field Version',
+        script: 'dpkg-parsechangelog --show-field Version',
         returnStdout: true
     ).trim()
 
@@ -154,6 +156,7 @@ def buildPackage() {
 //	    pristineTarName: ''
     sh 'dch -b -v ' + VER  + ' "' + env.BUILD_TAG  + '"'
     sh 'sudo apt-get update'
+
     sh 'debuild-pbuilder  -i -us -uc -b'
     sh 'mkdir -p $WORKSPACE/dist/debian/ ; rm -rf $WORKSPACE/dist/debian/* ; mv ../' + SOURCE + '*_' + VER + '_*.deb ../' + SOURCE + '*_' + VER + '_*.changes ../' + SOURCE + '*_' + VER + '_*.build $WORKSPACE/dist/debian/'
 }
