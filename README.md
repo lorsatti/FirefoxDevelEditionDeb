@@ -8,7 +8,7 @@ A version of Firefox that's tailored for web developers.
 Building package
 ----------------
 
-```sh
+```shell
 apt-get -y install devscripts dpkg-dev debhelper
 git clone https://github.com/VitexSoftware/FirefoxDevelEditionDeb.git
 cd FirefoxDevelEditionDeb
