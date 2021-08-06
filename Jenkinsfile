@@ -117,6 +117,10 @@ def copyArtifact(){
 
 def buildPackage() {
 
+    String url = 'https://download-installer.cdn.mozilla.net/pub/devedition/releases/'
+    sh "VERSION=\$(curl ${url} | grep -o '[0-9]*[0-9][0-9]\\.[0-9][a-z][0-9]*[0-9]' | tail -1) envsubst '\${VERSION}' < debian/changelog.tmpl > debian/changelog"
+    sh "ARCHITECTURE=\$(dpkg --print-architecture) envsubst '\${ARCHITECTURE}' < debian/control.tmpl > debian/control"
+
     def DIST = sh (
 	script: 'lsb_release -sc',
         returnStdout: true
@@ -131,9 +135,6 @@ def buildPackage() {
 	script: 'dpkg-parsechangelog --show-field Source',
         returnStdout: true
     ).trim()
-
-    String url = 'https://download-installer.cdn.mozilla.net/pub/devedition/releases/'
-    sh "VERSION=\$(curl ${url} | grep -o '[0-9]*[0-9][0-9]\\.[0-9][a-z][0-9]*[0-9]' | tail -1) envsubst '\${VERSION}' < debian/changelog.tmpl > debian/changelog"
 
     def VERSION = sh (
         script: 'dpkg-parsechangelog --show-field Version',
